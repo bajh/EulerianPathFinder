@@ -4,7 +4,7 @@ class TourFinder:
     self.graph = graph
 
   def find_tour(self):
-    return Node(self.graph[0][0], self.graph[0][0], None, self.graph).find_next()
+    return Node(self.graph[0][0], self.graph[0][0], [], self.graph).find_next()
 
 class Node:
 
@@ -16,7 +16,13 @@ class Node:
     self.untraveled = untraveled
 
   def complete_tour(self):
-    len(untraveled) == 0 
+    if len(self.untraveled) == 1:
+      if len(self.neighbors()):
+        if self.origin in self.neighbors()[0]:
+          return True
+
+  def remaining_origin_nodes(self):
+    return [edge for edge in self.untraveled if self.origin in edge]
 
   def neighbors(self):
     edges = []
@@ -24,24 +30,31 @@ class Node:
       if (self.origin == self.name):
         if (self.name in edge):
           edges.append(edge)
+      elif ((self.origin in edge) and len(self.untraveled) == 1):
+        edges.append(edge)
       else:
-        if (self.name in edge) and (self.origin not in edge):
+        # This doesn't allow it to loop around!!
+        if (self.name in edge) and ((self.origin not in edge) or (self.remaining_origin_nodes() > 2)):
           edges.append(edge)
     return edges
 
   def find_next(self):
-    if self.complete_tour:
+    if self.complete_tour():
+      self.traveled += [self.neighbors()[0]]
       return self.traveled
-    elif len(neighbors) == 0:
+    elif len(self.neighbors()) == 0:
       return None
     else:
-      for neighbor in neighbors:
+      for neighbor in self.neighbors():
         next_node = [node for node in neighbor if (self.name != node)][0]
-        next = Node(next_node, self.origin, self.traveled + neighbor, [edge for edge in untraveled if edge != neighbor]).find_next()
+        next = Node(next_node, self.origin, list(self.traveled + [neighbor]), [edge for edge in self.untraveled if edge != neighbor]).find_next()
         if next:
           return next
 
+# Test example:
+# my_graph = [(8, 16), (8, 18), (16, 17), (18, 19),
+# (3, 17), (13, 17), (5, 13),(3, 4), (0, 18), (3, 14), (11, 14),
+# (1, 8), (1, 9), (4, 12), (2, 19),(1, 10), (7, 9), (13, 15),
+# (6, 12), (0, 1), (2, 11), (3, 18), (5, 6), (7, 15), (8, 13), (10, 17)]
 
-my_graph = [(0, 1), (1, 5), (1, 7), (4, 5), (4, 8), (1, 6), (3, 7), (5, 9), (2, 4), (0, 4), (2, 5), (3, 6), (8, 9)]
-
-print TourFinder(my_graph).find_tour()
+# print TourFinder(my_graph).find_tour()

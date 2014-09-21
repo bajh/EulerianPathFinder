@@ -21,7 +21,7 @@ class Node:
         if self.origin in self.neighbors()[0]:
           return True
 
-  def remaining_origin_nodes(self):
+  def remaining_edges_for_origin(self):
     return [edge for edge in self.untraveled if self.origin in edge]
 
   def neighbors(self):
@@ -34,7 +34,7 @@ class Node:
         edges.append(edge)
       else:
         # This doesn't allow it to loop around!!
-        if (self.name in edge) and ((self.origin not in edge) or (self.remaining_origin_nodes() > 2)):
+        if (self.name in edge) and ((self.origin not in edge) or (self.remaining_edges_for_origin() > 2)):
           edges.append(edge)
     return edges
 

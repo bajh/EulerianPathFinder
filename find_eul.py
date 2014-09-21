@@ -4,7 +4,7 @@ class TourFinder:
     self.graph = graph
 
   def find_tour(self):
-    return Node(self.graph[0][0], self.graph[0][0], None, self.graph).find_next
+    return Node(self.graph[0][0], self.graph[0][0], None, self.graph).find_next()
 
 class Node:
 
@@ -30,14 +30,14 @@ class Node:
     return edges
 
   def find_next(self):
-    if complete_tour:
-      return traveled
+    if self.complete_tour:
+      return self.traveled
     elif len(neighbors) == 0:
       return None
     else:
       for neighbor in neighbors:
         next_node = [node for node in neighbor if (self.name != node)][0]
-        next = Node(next_node, self.origin, self.traveled + neighbor, [edge for edge in untraveled if edge != neighbor]).find_next
+        next = Node(next_node, self.origin, self.traveled + neighbor, [edge for edge in untraveled if edge != neighbor]).find_next()
         if next:
           return next
 
